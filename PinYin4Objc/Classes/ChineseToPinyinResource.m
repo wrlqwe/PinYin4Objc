@@ -48,14 +48,20 @@ static inline NSString* cachePathForKey(NSString* directory, NSString* key) {
         }
         
     }
-    
+
+    // 解决由于git的bug导致之前版本的 unicode_to_hanyu_pinyin.txt 里 crlf 只包含 lf，致使 dictionaryText 无法正确分行的问题。
+    // 1.添加 dataMap.count > 1 判断，如果此前的数据有错误，则重新制作缓存。
+    // 2.如果当前用户存在资源文件错误的情况，制作缓存时判断此情况，重新依\n分行。
     NSDictionary *dataMap=(NSDictionary *)[self cachedObjectForKey:kCacheKeyForUnicode2Pinyin];
-    if (dataMap) {
+    if (dataMap && dataMap.count > 1) {
         self->_unicodeToHanyuPinyinTable=dataMap;
     }else{
         NSString *resourceName =[[NSBundle bundleForClass:self.class] pathForResource:@"unicode_to_hanyu_pinyin" ofType:@"txt"];
         NSString *dictionaryText=[NSString stringWithContentsOfFile:resourceName encoding:NSUTF8StringEncoding error:nil];
         NSArray *lines = [dictionaryText componentsSeparatedByString:@"\r\n"];
+        if (lines.count == 1) {
+            lines = [dictionaryText componentsSeparatedByString:@"\n"];
+        }
         __block NSMutableDictionary *tempMap=[[NSMutableDictionary alloc] init];
         @autoreleasepool {
                 [lines enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
