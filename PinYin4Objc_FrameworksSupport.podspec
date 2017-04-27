@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license      = {:type => 'Apache',:file => 'LICENSE'}
   s.author       = { "wrl" => "515045622@qq.com" }
   s.platform     = :ios
-  s.source       = { :git => 'https://github.com/wrlqwe/PinYin4Objc.git', :tag => '1.1.3'}
+  s.source       = { :git => 'https://github.com/wrlqwe/PinYin4Objc.git', :tag => s.version.to_s}
   s.source_files  = 'PinYin4Objc/Classes/*.{h,m}'
   s.resources = "PinYin4Objc/Resources/*"
   s.requires_arc = true
